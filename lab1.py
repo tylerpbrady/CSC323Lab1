@@ -1,6 +1,8 @@
 import binascii
 import base64
 import string
+import time
+import random
 
 
 class mersenneTwister:
@@ -53,7 +55,19 @@ class mersenneTwister:
 
         return y & 0xFFFFFFFF
 
+def oracle():
+    # wait between 5 and 60 seconds, generated randomly
+    wait = random.randint(5, 60)
+    time.sleep(wait)
+    utime = int(time.time())
+    # seed MT19937 with utime
+    twist = mersenneTwister(utime)
+    wait = random.randint(5, 60)
+    num = twist.get_random_num()
+    decimal_bytes = num.to_bytes((num.bit_length() + 7) // 8, 'big')
+    base64_encoded = base64.b64encode(decimal_bytes).decode('utf-8')
 
+    return base64_encoded
 
 # def mersenne(seed):
 
@@ -137,14 +151,19 @@ class mersenneTwister:
 #     return twist()
 
 
-twist = mersenneTwister(123)
+"""twist = mersenneTwister(123)
 num1 = twist.get_random_num()
 num2 = twist.get_random_num()
 num3 = twist.get_random_num()
 
 print(num1)
 print(num2)
-print(num3)
+print(num3)"""
+
+print(oracle())
+#print(time.time())
+
+# make sure seed is 32 bits
 
 
 
