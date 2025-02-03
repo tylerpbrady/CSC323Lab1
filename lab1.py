@@ -1,6 +1,7 @@
 import binascii
 import base64
 import string
+import datetime
 import time
 import random
 
@@ -68,6 +69,25 @@ def oracle():
     base64_encoded = base64.b64encode(decimal_bytes).decode('utf-8')
 
     return base64_encoded
+
+def mt_brute_force(oracle):
+    #print(oracle, "\n")
+    # start: utime for beginning of day
+    # end: current time
+    today = datetime.date.today()
+    start_of_day = datetime.datetime.combine(today, datetime.time.min)
+    unix_timestamp = int(time.mktime(start_of_day.timetuple()))
+    end = int(time.time())
+
+    for i in range(unix_timestamp, (unix_timestamp + 86400), 1):
+        twist = mersenneTwister(i)
+        num = twist.get_random_num()
+        decimal_bytes = num.to_bytes((num.bit_length() + 7) // 8, 'big')
+        base64_encoded = base64.b64encode(decimal_bytes).decode('utf-8')
+        #print(base64_encoded)
+        if base64_encoded == oracle:
+            return i
+    return -1
 
 # def mersenne(seed):
 
@@ -160,7 +180,7 @@ print(num1)
 print(num2)
 print(num3)"""
 
-print(oracle())
+print(mt_brute_force(oracle()))
 #print(time.time())
 
 # make sure seed is 32 bits
